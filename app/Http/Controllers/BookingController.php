@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\AdcDate;
 use App\Models\CapacityLevel;
 use App\Models\Booking;
+use App\Notifications\BookingCreatedNotification;
 
 class BookingController extends Controller
 {
@@ -164,6 +165,7 @@ class BookingController extends Controller
             $user->adc_centre_id = $capacity->adcDate->adc_centre_id;
             $user->save();
 
+            //$user->notify(new BookingCreatedNotification($booking));
             session()->put('booking_id', $booking->id);
         });
 

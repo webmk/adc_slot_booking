@@ -30,13 +30,15 @@
         <h3 class="font-semibold text-lg mb-4">Upcoming ADC Dates</h3>
         @if($centre->dates->count())
             <ul class="space-y-3">
-                @foreach($centre->dates as $d)
+                @foreach($centre->dates as $date)
+                @foreach($date->capacities as $cap)
                     <li class="border p-3 rounded-lg hover:bg-gray-50">
-                        <div class="font-medium">{{ $d->date->toDateString() }}</div>
+                        <div class="font-medium">{{ $date->date->toDateString() }}</div>
                         <div class="text-gray-500 text-sm">
-                            Capacity: {{ $d->current_count }} / {{ $d->max_capacity }}
+                            Capacity: {{ $cap->current_count }} / {{ $cap->capacity }}
                         </div>
                     </li>
+                    @endforeach
                 @endforeach
             </ul>
         @else

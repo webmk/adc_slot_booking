@@ -9,7 +9,7 @@ use App\Models\Booking;
 class AdcDate extends Model
 {
     protected $fillable = [
-        'adc_center_id',
+        'adc_centre_id',
         'date',
     ];
 
@@ -20,6 +20,11 @@ class AdcDate extends Model
     public function centre()
     {
         return $this->belongsTo(AdcCentre::class, 'adc_centre_id');
+    }
+
+    public function capacities()
+    {
+        return $this->hasMany(CapacityLevel::class, 'adc_date_id');
     }
 
     public function bookings()

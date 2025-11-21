@@ -22,8 +22,8 @@ class AdcCentreController extends Controller
     {
         $q = request()->query('q');
         $adcCentres = AdcCentre::when($q, function ($query, $q) {
-            return $query->where('name', 'like', "%$q%")
-                         ->orWhere('city', 'like', "%$q%");
+            return $query->where('city', 'like', "%$q%")
+                ->orWhere('state', 'like', "%$q%");
         })->paginate(10)->withQueryString();
 
         return view('admin.adc_centres.index', compact('adcCentres', 'q'));
@@ -43,9 +43,9 @@ class AdcCentreController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'name' => 'required|string|max:255',
             'city' => 'required|string|max:255',
-            'address' => 'required|string|max:500',
+            'state' => 'nullable|string|max:255',
+            'address' => 'nullable|string',
         ]);
 
         AdcCentre::create($data);
@@ -58,9 +58,12 @@ class AdcCentreController extends Controller
      */
     public function show(AdcCentre $adcCentre)
     {
-        $adcCentre->load(['dates' => function($q){
-            $q->orderBy('date');
-        }]);
+        $adcCentre->load([
+            'dates' => function ($q) {
+                $q->orderBy('date');
+            },
+            'dates.capacities.level'
+        ]);
 
         return view('admin.adc_centres.show', ['centre' => $adcCentre]);
     }
@@ -79,15 +82,15 @@ class AdcCentreController extends Controller
     public function update(Request $request, AdcCentre $adcCentre)
     {
         $data = $request->validate([
-            'name' => ['required','string','max:255', Rule::unique('adc_centres','name')->ignore($adcCentre->id)],
-            'city' => ['nullable','string','max:255'],
-            'address' => ['nullable','string'],
+            'city' => ['required', 'string', 'max:255', Rule::unique('adc_centres', 'city')->ignore($adcCentre->id)],
+            'state' => ['nullable', 'string', 'max:255'],
+            'address' => ['nullable', 'string'],
         ]);
 
         $adcCentre->update($data);
 
         return redirect()->route('admin.adc-centres.index')
-                         ->with('success', 'ADC Centre updated successfully.');
+            ->with('success', 'ADC Centre updated successfully.');
     }
 
     /**
@@ -97,6 +100,6 @@ class AdcCentreController extends Controller
     {
         $adcCentre->delete();
         return redirect()->route('admin.adc-centres.index')
-                         ->with('success', 'ADC Centre deleted successfully.');
+            ->with('success', 'ADC Centre deleted successfully.');
     }
 }

@@ -26,6 +26,12 @@
         </a>
       </li>
       <li>
+        <a href="{{ route('admin.bookings.index') }}" class="flex items-center gap-3 p-2 rounded hover:bg-gray-50 {{ request()->is('admin/bookings*') ? 'bg-gray-100 font-semibold' : '' }}">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7H3v12a2 2 0 002 2z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Bookings
+        </a>
+      </li>
+      <li>
         <a href="#" class="flex items-center gap-3 p-2 rounded hover:bg-gray-50">
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 7h18M3 12h18M3 17h18" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           Reports
