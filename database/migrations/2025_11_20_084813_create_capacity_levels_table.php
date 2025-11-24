@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('capacity_levels', function (Blueprint $table) {
             $table->id();
             $table->foreignId('adc_date_id')->constrained('adc_dates')->cascadeOnDelete();
-            $table->foreignId('level_id')->constrained('levels')->cascadeOnDelete();
+            $table->string('level');
             $table->integer('capacity')->default(0);
             $table->timestamps();
         });

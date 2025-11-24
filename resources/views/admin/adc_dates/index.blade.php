@@ -36,11 +36,11 @@
         </div>
         <div>
             <label class="block text-sm font-medium text-gray-700">Level</label>
-            <select name="level_id" class="border px-3 py-2 rounded-lg w-32">
+            <select name="level" class="border px-3 py-2 rounded-lg w-32">
                 <option value="">All</option>
                 @foreach($levels as $level)
-                <option value="{{ $level->id }}" {{ $levelId == $level->id ? 'selected' : '' }}>
-                    {{ $level->name }}
+                <option value="{{ $level }}" {{ $levelName == $level ? 'selected' : '' }}>
+                    {{ $level }}
                 </option>
                 @endforeach
             </select>
@@ -98,7 +98,7 @@
                         <div class="flex justify-between mb-1">
                             <div>
                                 <span class="font-semibold text-gray-800">
-                                    Level: {{ $cap->level->name }}
+                                    Level: {{ $cap->level }}
                                 </span>
                                 <span class="ml-2 text-sm text-gray-600">
                                     ({{ $current }} / {{ $max }})

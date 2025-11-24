@@ -46,7 +46,7 @@
             <tr class="border-b hover:bg-gray-50">
                 <td class="p-3">{{ $b->user->name }}</td>
                 <td class="p-3">{{ $b->user->email }}</td>
-                <td class="p-3">{{ $b->user->level->name ?? '-' }}</td>
+                <td class="p-3">{{ $b->user->level ?? '-' }}</td>
                 <td class="p-3">
                     {{ $b->adcDate->date->format('d M Y') }}
                 </td>

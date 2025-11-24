@@ -11,8 +11,8 @@ class AdcCentreAndDatesSeeder extends Seeder
 {
     public function run()
     {
-        $centre = AdcCentre::firstOrCreate(['city'=>'New Delhi','address'=>'ONSITE']);
+        $centre = AdcCentre::firstOrCreate(['city'=>'MUMBAI','address'=>'ONSITE']);
         AdcDate::firstOrCreate(['adc_centre_id' => $centre->id, 'date' => Carbon::now()->addDays(10)->toDateString()]);
-        AdcDate::firstOrCreate(['adc_centre_id' => $centre->id, 'date' => Carbon::now()->addDays(20)->toDateString()]);
+        AdcDate::firstOrCreate(['adc_centre_id' => $centre->id, 'date' => Carbon::now()->addDays(15)->toDateString()]);
     }
 }

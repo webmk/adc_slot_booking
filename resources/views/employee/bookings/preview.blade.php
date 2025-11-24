@@ -10,7 +10,7 @@
         <p><strong>Date:</strong> {{ $date->date->format('d M, Y') }}</p>
         <p><strong>Centre:</strong> {{ $centre->city }}</p>
         <p>
-            <strong>Level:</strong> {{ $capacity->level->name }}
+            <strong>Level:</strong> {{ $capacity->level }}
         </p>
         <p>
             <strong>Capacity for your Level:</strong>

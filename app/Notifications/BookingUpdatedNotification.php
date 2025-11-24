@@ -3,14 +3,15 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class BookingCreatedNotification extends Notification
+class BookingUpdatedNotification extends Notification
 {
     use Queueable;
-
     public $booking;
+
     /**
      * Create a new notification instance.
      */
@@ -35,13 +36,12 @@ class BookingCreatedNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('ADC Booking Confirmation')
+            ->subject('Your ADC Booking Has Been Updated')
             ->greeting('Hello ' . $notifiable->name)
-            ->line('Your ADC slot has been successfully booked.')
-            ->line('Date: ' . $this->booking->adcDate->date->format('d M Y'))
-            ->line('Centre: ' . $this->booking->adcDate->centre->city)
-            ->line('Level: ' . $notifiable->level)
-            ->line('Thank you.');
+            ->line('Your ADC booking has been updated by the Admin.')
+            ->line('New Date: ' . $this->booking->adcDate->date->format('d M Y'))
+            ->line('New Centre: ' . $this->booking->adcDate->centre->city)
+            ->line('Please contact support if you have any questions.');
     }
 
     /**

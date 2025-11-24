@@ -28,7 +28,7 @@
         <div>
             <label class="block text-sm font-medium text-gray-600 mb-1">Level</label>
             <input type="text"
-                value="{{ $user->level->name ?? 'N/A' }}"
+                value="{{ $user->level ?? 'N/A' }}"
                 class="w-full bg-gray-100 text-gray-700 px-3 py-2 rounded border"
                 readonly>
         </div>
@@ -65,22 +65,23 @@
 
     {{-- ADC Date Selection --}}
     <div class="mt-8">
-        @if(count($capacities))
+        @if(count($adcDates))
         <h3 class="text-xl font-semibold mb-3">Select ADC Date</h3>
         <form method="POST" action="{{ route('employee.bookings.preview') }}">
             @csrf
             @method('POST')
             <select name="capacity_id"
                 class="w-full px-3 py-2 border rounded-lg bg-white">
-                @foreach($capacities as $cap)
+                @foreach($adcDates as $date)
 
                 @php
+                $cap = $date->capacity_for_level;
                 $isFull = $cap->current_count >= $cap->capacity;
                 @endphp
 
                 <option value="{{ $cap->id }}" @if($isFull) disabled @endif>
-                    {{ $cap->AdcDate->date->toFormattedDateString() }}
-                    - {{ $cap->AdcDate->centre->city }}
+                    {{ $date->date->toFormattedDateString() }}
+                    - {{ $date->centre->city }}
 
                     @if($isFull)
                     (Full)

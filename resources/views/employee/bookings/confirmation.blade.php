@@ -20,7 +20,7 @@
         </p>
         <p>
             <strong>Level:</strong>
-            {{ $booking->user->level->name }}
+            {{ $booking->user->level }}
         </p>
     </div>
     <div class="mt-6">

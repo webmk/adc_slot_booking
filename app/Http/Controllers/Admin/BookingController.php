@@ -7,6 +7,7 @@ use App\Models\AdcCentre;
 use App\Models\AdcDate;
 use App\Models\Booking;
 use App\Models\CapacityLevel;
+use App\Notifications\BookingUpdatedNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -18,7 +19,7 @@ class BookingController extends Controller
         $date = $request->query('date');
         $centreId = $request->query('centre_id');
 
-        $query = Booking::with(['user.level', 'adcDate.centre'])
+        $query = Booking::with(['user', 'adcDate.centre'])
             ->orderBy('created_at', 'desc');
 
         if ($q) {
@@ -43,13 +44,13 @@ class BookingController extends Controller
     }
     public function edit(Booking $booking)
     {
-        $userLevelId = $booking->user->level_id;
+        $userLevel = $booking->user->level;
 
-        $dates = AdcDate::with(['centre', 'capacities' => function ($q) use ($userLevelId) {
-            $q->where('level_id', $userLevelId);
+        $dates = AdcDate::with(['centre', 'capacities' => function ($q) use ($userLevel) {
+            $q->where('level', $userLevel);
         }])
-            ->whereHas('capacities', function ($q) use ($userLevelId) {
-                $q->where('level_id', $userLevelId);
+            ->whereHas('capacities', function ($q) use ($userLevel) {
+                $q->where('level', $userLevel);
             })
             ->orderBy('date')
             ->get();
@@ -66,7 +67,7 @@ class BookingController extends Controller
         $user = $booking->user;
         $newDateId = $request->adc_date_id;
         $capacity = CapacityLevel::where('adc_date_id', $newDateId)
-            ->where('level_id', $user->level_id)
+            ->where('level', $user->level)
             ->first();
 
         if (!$capacity) {
@@ -83,6 +84,8 @@ class BookingController extends Controller
 
             $user->adc_centre_id = $capacity->adcDate->adc_centre_id;
             $user->save();
+
+            //$user->notify(new BookingUpdatedNotification($booking));
         });
 
         return redirect()->route('admin.bookings.index')

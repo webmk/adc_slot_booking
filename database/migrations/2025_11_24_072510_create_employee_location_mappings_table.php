@@ -11,11 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('levels', function (Blueprint $table) {
+        Schema::create('employee_location_mappings', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
-            $table->string('description')->nullable();
+            $table->string('employee_location');
+            $table->unsignedBigInteger('adc_centre_id');
             $table->timestamps();
+            $table->foreign('adc_centre_id')->references('id')->on('adc_centres')->cascadeOnDelete();
         });
     }
 
@@ -24,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('levels');
+        Schema::dropIfExists('employee_location_mappings');
     }
 };

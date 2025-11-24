@@ -10,7 +10,7 @@ class CapacityLevel extends Model
 {
     protected $fillable = [
         'adc_date_id',
-        'level_id',
+        'level',
         'capacity',
     ];
     public function adcDate()
@@ -32,7 +32,7 @@ class CapacityLevel extends Model
             static::$cachedCounts = CapacityCountService::loadCounts();
         }
 
-        $key = $this->adc_date_id . '|' . $this->level_id;
+        $key = $this->adc_date_id . '|' . $this->level;
 
         return static::$cachedCounts[$key] ?? 0;
     }

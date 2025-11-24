@@ -10,73 +10,63 @@ use Illuminate\Support\Facades\DB;
 use App\Models\AdcDate;
 use App\Models\CapacityLevel;
 use App\Models\Booking;
+use App\Models\EmployeeLocationMapping;
 use App\Notifications\BookingCreatedNotification;
 
 class BookingController extends Controller
 {
 
-    /* public function employeeInfo()
-    {
-        $user = Auth::user();
-        $levelId = $user->level_id;
-
-        /* $capacities = CapacityLevel::with(['adcDate.centre', 'level'])
-            ->where('level_id', $levelId)
-            ->orderBy('adc_date_id', 'asc')
-            ->get(); */
-
-    /*$capacities = CapacityLevel::with(['adcDate.centre', 'level'])
-            ->where('level_id', $levelId)
-            ->get()
-            ->filter(function ($capacity) {
-                $current_count = Booking::where('adc_date_id', $capacity->adc_date_id)->count();
-                $capacity->current_count = $current_count;
-
-                return $current_count < $capacity->capacity;
-            });
-
-        return view('employee.index', ['user' => $user, 'capacities'  => $capacities]);
-    } */
-
     public function employeeInfo()
     {
         $user = Auth::user();
 
-        // Check if employee already booked
         $booking = Booking::with('adcDate.centre')
             ->where('user_id', $user->id)
             ->first();
 
         if ($booking) {
             return view('employee.index', [
-                'user'    => $user,
+                'user' => $user,
                 'booking' => $booking,
-                'capacities' => collect(),
+                'adcDates' => collect(),
                 'alreadyBooked' => true
             ]);
         }
 
-        // If no booking yet → show available dates
-        $levelId = $user->level_id;
-
-        $capacities = CapacityLevel::with('adcDate.centre')
-            ->where('level_id', $levelId)
+        $centreId = EmployeeLocationMapping::where('employee_location', $user->location)
+            ->value('adc_centre_id');
+        if (!$centreId) {
+            return view('employee.index', [
+                'user' => $user,
+                'adcDates' => collect(),
+                'alreadyBooked' => false,
+                'booking' => null,
+                'error' => 'Your posting location is not mapped to any ADC Centre.'
+            ]);
+        }
+        $levelName = $user->level;
+        $adcDates = AdcDate::with(['centre', 'capacities' => function ($q) use ($levelName) {
+            $q->where('level', $levelName);
+        }])
+            ->where('adc_centre_id', $centreId)
+            ->orderBy('date', 'asc')
             ->get()
-            ->map(function ($cap) {
+            ->map(function ($date) {
+                $cap = $date->capacities->first();
+                if (!$cap) return null;
                 $cap->current_count = Booking::where('adc_date_id', $cap->adc_date_id)->count();
-                return $cap;
+                $date->capacity_for_level = $cap;
+                return $date;
             })
-            ->filter(function ($cap) {
-                return $cap->current_count < $cap->capacity;
-            });
-
+            ->filter(fn($date) => $date && $date->capacity_for_level->current_count < $date->capacity_for_level->capacity);
         return view('employee.index', [
             'user' => $user,
-            'capacities' => $capacities,
+            'adcDates' => $adcDates,
             'alreadyBooked' => false,
             'booking' => null
         ]);
     }
+
 
     /**
      * Show available dates based on employee level.
@@ -84,15 +74,15 @@ class BookingController extends Controller
     /* public function index()
     {
         $user = Auth::user();
-        $levelId = $user->level_id;
+        $level = $user->level;
 
         $capacities = CapacityLevel::with('adcDate.centre')
-            ->where('level_id', $levelId)
+            ->where('level', $level)
             ->get()
             ->filter(function ($capacity) {
                 $current_count = Booking::where('adc_date_id', $capacity->adc_date_id)
                     ->whereHas('user', function ($q) use ($capacity) {
-                        $q->where('level_id', $capacity->level_id);
+                        $q->where('level', $capacity->level);
                     })
                     ->count();
                 $capacity->current_count = $current_count;

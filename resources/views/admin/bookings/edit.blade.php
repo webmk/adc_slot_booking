@@ -8,7 +8,7 @@
     <h3 class="text-lg font-semibold mb-4">Employee Info</h3>
     <p><strong>Name:</strong> {{ $booking->user->name }}</p>
     <p><strong>CPF:</strong> {{ $booking->user->cpf_no }}</p>
-    <p><strong>Level:</strong> {{ $booking->user->level->name ?? '-' }}</p>
+    <p><strong>Level:</strong> {{ $booking->user->level ?? '-' }}</p>
     <form method="POST" action="{{ route('admin.bookings.update', $booking->id) }}"
         class="mt-6">
         @csrf

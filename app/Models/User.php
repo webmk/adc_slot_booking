@@ -47,8 +47,12 @@ class User extends Authenticatable
         ];
     }
 
-    public function level()
+    public function scopeLevels($query)
     {
-        return $this->belongsTo(Level::class);
+        return $query->whereNotNull('level')
+            ->whereRaw("TRIM(level) != ''")
+            ->distinct()
+            ->orderBy('level')
+            ->pluck('level');
     }
 }

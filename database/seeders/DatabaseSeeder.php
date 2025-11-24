@@ -19,14 +19,21 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         User::factory()->create([
-            'name' => 'Test2',
-            'email' => 'test2@example.com',
-            'password' => Hash::make('user123'),
+            'cpf_no' => 'A006142',
+            'name' => 'Manish',
+            'email' => 'manish.kumar@cipl.org.in',
+            'mobile' => '8873535456',
+            'level' => 'Level 1',
+            'location' => 'Location A',
+            'work_pattern' => 'Full-time',
+            'duty_type' => 'On-site',
+            'role' => 'admin',
+            'password' => Hash::make('ongc@123'),
         ]);
 
         /* $this->call([
             \Database\Seeders\AdcCentreAndDatesSeeder::class,
-            \Database\Seeders\LevelSeeder::class,
+            //\Database\Seeders\LevelSeeder::class,
         ]); */
     }
 }

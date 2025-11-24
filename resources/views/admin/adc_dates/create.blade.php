@@ -26,9 +26,9 @@
         <label class="block font-medium mb-2">Level-wise Capacity</label>
         @foreach($levels as $level)
             <div class="flex items-center gap-4 mb-2">
-                <span class="w-20 font-medium">{{ $level->name }}</span>
+                <span class="w-20 font-medium">{{ $level }}</span>
                 <input type="number" min="0" class="border px-3 py-2 rounded w-32"
-                       name="capacities[{{ $level->id }}]" placeholder="Capacity">
+                       name="capacities[{{ $level }}]" placeholder="Capacity">
             </div>
         @endforeach
     </div>

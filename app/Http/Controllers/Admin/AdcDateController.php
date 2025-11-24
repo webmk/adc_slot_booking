@@ -7,6 +7,7 @@ use App\Models\AdcCentre;
 use App\Models\AdcDate;
 use App\Models\CapacityLevel;
 use App\Models\Level;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -25,7 +26,7 @@ class AdcDateController extends Controller
         $from = $request->query('from');
         $to = $request->query('to');
         $centreId = $request->query('centre_id');
-        $levelId = $request->query('level_id');
+        $levelName = $request->query('level');
 
         $query = AdcDate::with(['centre', 'capacities.level'])
             ->orderBy('date', 'asc');
@@ -42,16 +43,16 @@ class AdcDateController extends Controller
             $query->where('adc_centre_id', $centreId);
         }
 
-        if ($levelId) {
-            $query->whereHas('capacities', function ($q) use ($levelId) {
-                $q->where('level_id', $levelId);
+        if ($levelName) {
+            $query->whereHas('capacities', function ($q) use ($levelName) {
+                $q->where('level', $levelName);
             });
         }
         $dates = $query->paginate(10)->withQueryString();
         $AdcCentres = AdcCentre::orderBy('city')->get();
-        $levels = Level::orderBy('name')->get();
+        $levels = User::levels();
 
-        return view('admin.adc_dates.index', compact('dates', 'AdcCentres', 'levels', 'from', 'to', 'centreId', 'from', 'to', 'levelId'));
+        return view('admin.adc_dates.index', compact('dates', 'AdcCentres', 'levels', 'from', 'to', 'centreId', 'from', 'to', 'levelName'));
     }
 
     /**
@@ -61,7 +62,7 @@ class AdcDateController extends Controller
     {
         $centres = AdcCentre::orderBy('city')->get();
         //$selectedCentre = $request->query('centre_id');
-        $levels = Level::orderBy('name')->get();
+        $levels = User::levels();
         return view('admin.adc_dates.create', compact('centres', 'levels'));
     }
 
@@ -84,11 +85,11 @@ class AdcDateController extends Controller
                 'adc_centre_id' => $request->adc_centre_id,
             ]);
 
-            foreach ($request->capacities as $levelId => $capacity) {
+            foreach ($request->capacities as $level => $capacity) {
                 if (!empty($capacity) && intval($capacity) > 0) {
                     CapacityLevel::create([
                         'adc_date_id'  => $adcDate->id,
-                        'level_id'     => $levelId,
+                        'level'     => $level,
                         'capacity' => intval($capacity),
                     ]);
                 }
@@ -116,8 +117,8 @@ class AdcDateController extends Controller
     {
         $adcDate = AdcDate::with('capacities')->findOrFail($id);
         $centres = AdcCentre::orderBy('city')->get();
-        $levels  = Level::orderBy('name')->get();
-        $capacityMap = $adcDate->capacities->pluck('capacity', 'level_id');
+        $levels = User::levels();
+        $capacityMap = $adcDate->capacities->pluck('capacity', 'level');
 
         return view('admin.adc_dates.edit', compact('adcDate', 'centres', 'levels', 'capacityMap'));
     }
@@ -143,11 +144,11 @@ class AdcDateController extends Controller
             ]);
 
             CapacityLevel::where('adc_date_id', $id)->delete();
-            foreach ($request->capacities as $levelId => $capacity) {
+            foreach ($request->capacities as $level => $capacity) {
                 if ($capacity > 0) {
                     CapacityLevel::create([
                         'adc_date_id'  => $id,
-                        'level_id'     => $levelId,
+                        'level'     => $level,
                         'capacity' => $capacity,
                     ]);
                 }
