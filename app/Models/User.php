@@ -18,8 +18,12 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
+        'cpf_no',
         'name',
         'email',
+        'mobile',
+        'location',
+        'level',
         'password',
         'adc_centre_id',
     ];
@@ -54,5 +58,10 @@ class User extends Authenticatable
             ->distinct()
             ->orderBy('level')
             ->pluck('level');
+    }
+
+    public function centre()
+    {
+        return $this->belongsTo(AdcCentre::class, 'adc_centre_id');
     }
 }

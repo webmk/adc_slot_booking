@@ -9,7 +9,7 @@
 
 <form class="bg-white p-4 shadow rounded mb-6 flex flex-wrap gap-4">
     <div>
-        <label>Name/Email</label>
+        <label>CPF No</label>
         <input type="text" name="q" value="{{ $q }}" class="border p-2 rounded">
     </div>
     <div>
@@ -33,7 +33,8 @@
     <table class="min-w-full">
         <thead>
             <tr class="bg-gray-100 text-left text-sm uppercase">
-                <th class="p-3">Employee</th>
+                <th class="p-3">CPF No</th>
+                <th class="p-3">Name</th>
                 <th class="p-3">Email</th>
                 <th class="p-3">Level</th>
                 <th class="p-3">Date</th>
@@ -44,6 +45,7 @@
         <tbody>
             @foreach($bookings as $b)
             <tr class="border-b hover:bg-gray-50">
+                <td class="p-3">{{ $b->user->cpf_no }}</td>
                 <td class="p-3">{{ $b->user->name }}</td>
                 <td class="p-3">{{ $b->user->email }}</td>
                 <td class="p-3">{{ $b->user->level ?? '-' }}</td>

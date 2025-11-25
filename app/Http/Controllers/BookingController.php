@@ -103,6 +103,7 @@ class BookingController extends Controller
             'capacity_id' => 'required|exists:capacity_levels,id',
         ]);
 
+        $user = Auth::user();
         $capacity = CapacityLevel::with('adcDate.centre', 'level')
             ->findOrFail($request->capacity_id);
         $date = $capacity->adcDate;
@@ -110,6 +111,7 @@ class BookingController extends Controller
         $capacity->current_count = $current_count;
 
         return view('employee.bookings.preview', [
+            'user'     => $user,
             'capacity' => $capacity,
             'date'     => $date,
             'centre'   => $date->centre

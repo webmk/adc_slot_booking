@@ -9,6 +9,9 @@ class AdminController extends Controller
 {
     public function index()
     {
-        return view('admin.dashboard');
+        $allCentres = \App\Models\AdcCentre::count();
+        $allDates = \App\Models\AdcDate::count();
+        $bookings = \App\Models\Booking::count();
+        return view('admin.dashboard', compact('allCentres', 'allDates', 'bookings'));
     }
 }

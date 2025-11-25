@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use LdapRecord\Container;
 
 class AuthController extends Controller
 {
@@ -18,23 +21,58 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
+            'cpf_no'   => 'required|string',
+            'password' => 'required|string',
         ]);
 
-        $credentials = $request->only('email', 'password');
+        $cpf = $request->cpf_no;
+        $password = $request->password;
 
-        if (Auth::attempt($credentials)) {
+        $user = User::where('cpf_no', $cpf)->first();
+        if ($user && Hash::check($password, $user->password)) {
+            Auth::login($user);
             $request->session()->regenerate();
-            $user = Auth::user();
-            if ($user->role === 'admin') {
-                return redirect()->intended(route('admin.dashboard'));
-            }
-            return redirect()->intended(route('employee.index'));
+            return $this->redirectAfterLogin($user);
         }
 
-        return back()->withErrors(['email' => 'The provided credentials do not match our records.']);
+        if (!$user) {
+            $connection = Container::getConnection('default');
+            $record = $connection->query()->findBy('samaccountname', $cpf);
+
+            if (!$record) {
+                return false;
+            }
+            $user = User::create(
+                [
+                    'cpf_no'           => $cpf,
+                    'name'             => $record['cn'][0] ?? null,
+                    'email'            => $record['mail'][0] ?? null,
+                    'mobile'           => $record['telephonenumber'][0] ?? null,
+                    'location' => $record['physicaldeliveryofficename'][0] ?? null,
+                    'level'       => $record['title'][0] ?? "E5",
+                    'password'         => Hash::make($password),
+                ]
+            );
+
+            Auth::login($user);
+            $request->session()->regenerate();
+            return $this->redirectAfterLogin($user);
+        }
+
+        return back()->withErrors(['cpf_no' => 'Invalid CPF or password.',])->withInput();
     }
+
+
+
+    private function redirectAfterLogin(User $user)
+    {
+        if ($user->role === 'admin') {
+            return redirect()->intended(route('admin.dashboard'));
+        }
+
+        return redirect()->intended(route('employee.index'));
+    }
+
 
     public function logout(Request $request)
     {

@@ -10,6 +10,13 @@
     {{-- Information Section --}}
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
+            <label class="block text-sm font-medium text-gray-600 mb-1">CPF No</label>
+            <input type="text"
+                value="{{ $user->cpf_no }}"
+                class="w-full bg-gray-100 text-gray-700 px-3 py-2 rounded border"
+                readonly>
+        </div>
+        <div>
             <label class="block text-sm font-medium text-gray-600 mb-1">Name</label>
             <input type="text"
                 value="{{ $user->name }}"

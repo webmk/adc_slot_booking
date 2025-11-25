@@ -24,8 +24,7 @@ class BookingController extends Controller
 
         if ($q) {
             $query->whereHas('user', function ($sub) use ($q) {
-                $sub->where('name', 'like', "%$q%")
-                    ->orWhere('email', 'like', "%$q%");
+                $sub->where('cpf_no', 'like', "%$q%");
             });
         }
 

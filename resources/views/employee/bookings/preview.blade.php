@@ -7,6 +7,8 @@
 <div class="max-w-2xl mx-auto bg-white shadow p-6 rounded-lg">
     <h2 class="text-2xl font-semibold mb-4">Preview Your Booking</h2>
     <div class="space-y-3 text-gray-700">
+        <p><strong>CPF No:</strong> {{ $user->cpf_no }}</p>
+        <p><strong>Name:</strong> {{ $user->name }}</p>
         <p><strong>Date:</strong> {{ $date->date->format('d M, Y') }}</p>
         <p><strong>Centre:</strong> {{ $centre->city }}</p>
         <p>
@@ -16,7 +18,7 @@
             <strong>Capacity for your Level:</strong>
             {{ $capacity->current_count }} / {{ $capacity->capacity }}
         </p>
-        <div class="p-4 bg-yellow-100 border-l-4 border-yellow-500 text-sm mt-4">
+        <div class="p-4 bg-yellow-100 border-l-4 border-yellow-500 text-lg mt-4">
             <strong>Note:</strong><br>
             Once a date is selected and confirmed, it cannot be changed.
         </div>

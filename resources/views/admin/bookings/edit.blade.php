@@ -6,8 +6,9 @@
 <h2 class="text-2xl font-semibold mb-6">Edit Booking</h2>
 <div class="bg-white p-6 rounded shadow max-w-xl">
     <h3 class="text-lg font-semibold mb-4">Employee Info</h3>
-    <p><strong>Name:</strong> {{ $booking->user->name }}</p>
     <p><strong>CPF:</strong> {{ $booking->user->cpf_no }}</p>
+    <p><strong>Name:</strong> {{ $booking->user->name }}</p>
+    <p><strong>Email:</strong> {{ $booking->user->email }}</p>
     <p><strong>Level:</strong> {{ $booking->user->level ?? '-' }}</p>
     <form method="POST" action="{{ route('admin.bookings.update', $booking->id) }}"
         class="mt-6">

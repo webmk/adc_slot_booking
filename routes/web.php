@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AdcDateController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\BookingController as AdminBookingController;
 use App\Http\Controllers\Admin\EmployeeLocationMappingController;
+use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BookingController;
@@ -34,6 +35,10 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->group(function () {
         EmployeeLocationMappingController::class,
         ['as' => 'admin']
     );
+    Route::get('/reports/data', [ReportController::class, 'fetchData'])
+    ->name('admin.reports.data');
+    Route::get('/reports', [ReportController::class, 'dynamicReport'])
+    ->name('admin.reports');
 });
 
 //Employee
