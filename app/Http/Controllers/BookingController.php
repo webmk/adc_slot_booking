@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\AdcDate;
 use App\Models\CapacityLevel;
 use App\Models\Booking;
+use App\Models\CpfLocationMapping;
 use App\Models\EmployeeLocationMapping;
 use App\Notifications\BookingCreatedNotification;
 
@@ -33,7 +34,7 @@ class BookingController extends Controller
             ]);
         }
 
-        $centreId = EmployeeLocationMapping::where('employee_location', $user->location)
+        $centreId = CpfLocationMapping::where('cpf_no', $user->cpf_no)
             ->value('adc_centre_id');
         if (!$centreId) {
             return view('employee.index', [
@@ -41,7 +42,7 @@ class BookingController extends Controller
                 'adcDates' => collect(),
                 'alreadyBooked' => false,
                 'booking' => null,
-                'error' => 'Your posting location is not mapped to any ADC Centre.'
+                'error' => 'You are not allowed to book'
             ]);
         }
         $levelName = $user->level;
@@ -153,9 +154,6 @@ class BookingController extends Controller
                 'adc_date_id' => $capacity->adc_date_id,
                 'created_by'  => $user->id,
             ]);
-
-            $user->adc_centre_id = $capacity->adcDate->adc_centre_id;
-            $user->save();
 
             //$user->notify(new BookingCreatedNotification($booking));
             session()->put('booking_id', $booking->id);

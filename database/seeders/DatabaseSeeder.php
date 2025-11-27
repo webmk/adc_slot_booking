@@ -23,11 +23,11 @@ class DatabaseSeeder extends Seeder
             'name' => 'Manish',
             'email' => 'manish.kumar@cipl.org.in',
             'mobile' => '8873535456',
-            'level' => 'Level 1',
-            'location' => 'Location A',
+            'level' => 'E5',
+            'location' => 'DELH',
             'work_pattern' => 'Full-time',
             'duty_type' => 'On-site',
-            'role' => 'admin',
+            'role' => '',
             'password' => Hash::make('ongc@123'),
         ]);
 

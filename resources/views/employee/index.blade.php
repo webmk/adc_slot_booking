@@ -6,8 +6,6 @@
 
 <div class="max-w-3xl mx-auto bg-white shadow p-6 rounded-lg">
     <h2 class="text-2xl font-semibold mb-6">Employee Information</h2>
-
-    {{-- Information Section --}}
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
             <label class="block text-sm font-medium text-gray-600 mb-1">CPF No</label>
@@ -70,7 +68,6 @@
         </div> -->
     </div>
 
-    {{-- ADC Date Selection --}}
     <div class="mt-8">
         @if(count($adcDates))
         <h3 class="text-xl font-semibold mb-3">Select ADC Date</h3>
@@ -110,13 +107,12 @@
             <p><strong>ADC Centre:</strong> {{ $booking->adcDate->centre->city }}</p>
             <p><strong>Date:</strong> {{ $booking->adcDate->date->format('d M Y') }}</p>
         </div>
-
         <div class="mt-6 p-4 bg-gray-100 rounded text-gray-600">
             Date selection is disabled because you have already booked a slot.
         </div>
 
         @else
-        <p class="text-red-600 text-sm">No ADC dates available for your level.</p>
+        <p class="text-red-600 text-md">You are not allowed to book</p>
         @endif
         @endif
     </div>

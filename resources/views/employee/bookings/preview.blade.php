@@ -15,7 +15,7 @@
             <strong>Level:</strong> {{ $capacity->level }}
         </p>
         <p>
-            <strong>Capacity for your Level:</strong>
+            <strong>Slots filled status:</strong>
             {{ $capacity->current_count }} / {{ $capacity->capacity }}
         </p>
         <div class="p-4 bg-yellow-100 border-l-4 border-yellow-500 text-lg mt-4">

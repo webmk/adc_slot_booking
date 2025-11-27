@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\AdcCentre;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class AdcCentreController extends Controller
@@ -50,6 +51,12 @@ class AdcCentreController extends Controller
 
         AdcCentre::create($data);
 
+        \Log::info('ADC_CENTRE_CREATED', [
+            'admin'     => Auth::user()->cpf_no,
+            'centre' => $data,
+            'ip'        => request()->ip(),
+        ]);
+
         return redirect()->route('admin.adc-centres.index')->with('success', 'ADC Center created successfully.');
     }
 
@@ -89,6 +96,12 @@ class AdcCentreController extends Controller
 
         $adcCentre->update($data);
 
+        \Log::info('ADC_CENTRE_UPDATED', [
+            'admin' => Auth::user()->cpf_no,
+            'old'   => $adcCentre->getOriginal(),
+            'new'   => $adcCentre->getDirty(),
+        ]);
+
         return redirect()->route('admin.adc-centres.index')
             ->with('success', 'ADC Centre updated successfully.');
     }
@@ -99,6 +112,11 @@ class AdcCentreController extends Controller
     public function destroy(AdcCentre $adcCentre)
     {
         $adcCentre->delete();
+        \Log::warning('ADC_CENTRE_DELETED', [
+            'admin' => Auth::user()->cpf_no,
+            'centre' => $adcCentre->city,
+        ]);
+
         return redirect()->route('admin.adc-centres.index')
             ->with('success', 'ADC Centre deleted successfully.');
     }

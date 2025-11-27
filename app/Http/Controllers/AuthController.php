@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Services\UserLevelService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -18,7 +19,7 @@ class AuthController extends Controller
         return view('auth.login');
     }
 
-    public function login(Request $request)
+    public function login(Request $request, UserLevelService $userLevelService)
     {
         $request->validate([
             'cpf_no'   => 'required|string',
@@ -27,7 +28,6 @@ class AuthController extends Controller
 
         $cpf = $request->cpf_no;
         $password = $request->password;
-
         $user = User::where('cpf_no', $cpf)->first();
         if ($user && Hash::check($password, $user->password)) {
             Auth::login($user);
@@ -38,6 +38,7 @@ class AuthController extends Controller
         if (!$user) {
             $connection = Container::getConnection('default');
             $record = $connection->query()->findBy('samaccountname', $cpf);
+            $level = $userLevelService->getUserLevel($cpf)?->GR_Res?->Level;
 
             if (!$record) {
                 return false;
@@ -48,8 +49,8 @@ class AuthController extends Controller
                     'name'             => $record['cn'][0] ?? null,
                     'email'            => $record['mail'][0] ?? null,
                     'mobile'           => $record['telephonenumber'][0] ?? null,
-                    'location' => $record['physicaldeliveryofficename'][0] ?? null,
-                    'level'       => $record['title'][0] ?? "E5",
+                    'location'         => $record['physicaldeliveryofficename'][0] ?? null,
+                    'level'            => $level ?? null,
                     'password'         => Hash::make($password),
                 ]
             );

@@ -36,12 +36,16 @@ class BookingCreatedNotification extends Notification
     {
         return (new MailMessage)
             ->subject('ADC Booking Confirmation')
-            ->greeting('Hello ' . $notifiable->name)
-            ->line('Your ADC slot has been successfully booked.')
-            ->line('Date: ' . $this->booking->adcDate->date->format('d M Y'))
-            ->line('Centre: ' . $this->booking->adcDate->centre->city)
-            ->line('Level: ' . $notifiable->level)
-            ->line('Thank you.');
+            ->greeting('Madam/Sir,')
+            ->line('Your ADC slot for **'
+                . $this->booking->adcDate->date->format('d M Y')
+                . '** at **'
+                . $this->booking->adcDate->centre->city
+                . '** has been successfully booked.')
+            ->line('While every effort will be made to accommodate your preferred choice, it is informed that, in case of any unforeseen circumstances, the allotted ADC slot may be subject to change.')
+            ->line('Your exact schedule will be communicated separately through email.')
+            ->line('Warm Regards,')
+            ->salutation('Corporate Promotions, ONGC');
     }
 
     /**

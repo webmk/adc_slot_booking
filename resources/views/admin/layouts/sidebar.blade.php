@@ -40,6 +40,15 @@
         </a>
       </li>
       <li>
+        <a href="{{ route('admin.cpf-mappings.index') }}" class="flex items-center gap-3 p-2 rounded hover:bg-gray-50 {{ request()->is('admin/cpf-mappings*') ? 'bg-gray-100 font-semibold' : '' }}">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <circle cx="12" cy="10" r="3" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M12 2C7.58172 2 4 5.58172 4 10C4 11.8919 4.40209 13.1304 5.5 14.5L12 22L18.5 14.5C19.5979 13.1304 20 11.8919 20 10C20 5.58172 16.4183 2 12 2Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          CPF Locations
+        </a>
+      </li>
+      <!-- <li>
         <a href="{{ route('admin.location-mappings.index') }}" class="flex items-center gap-3 p-2 rounded hover:bg-gray-50 {{ request()->is('admin/location-mappings*') ? 'bg-gray-100 font-semibold' : '' }}">
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
             <circle cx="12" cy="10" r="3" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
@@ -47,7 +56,7 @@
           </svg>
           Locations
         </a>
-      </li>
+      </li> -->
       <li>
         <a href="{{ route('admin.reports') }}" class="flex items-center gap-3 p-2 rounded hover:bg-gray-50">
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">

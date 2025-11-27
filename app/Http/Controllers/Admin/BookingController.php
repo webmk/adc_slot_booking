@@ -63,39 +63,62 @@ class BookingController extends Controller
             'adc_date_id' => 'required|exists:adc_dates,id',
         ]);
 
-        $user = $booking->user;
-        $newDateId = $request->adc_date_id;
-        $capacity = CapacityLevel::where('adc_date_id', $newDateId)
+        $user       = $booking->user;
+        $newDateId  = $request->adc_date_id;
+
+        /* $capacity = CapacityLevel::where('adc_date_id', $newDateId)
             ->where('level', $user->level)
             ->first();
 
-        if (!$capacity) {
-            return back()->withErrors(['adc_date_id' => 'Selected date is not available for this level.']);
-        }
-        if ($capacity->current_count >= $capacity->max_capacity) {
-            return back()->withErrors(['adc_date_id' => 'Selected date is FULL for this level.']);
+         if (!$capacity) {
+            return back()->withErrors([
+                'adc_date_id' => 'Selected date is not available for this level.'
+            ]);
         }
 
-        DB::transaction(function () use ($booking, $newDateId, $capacity, $user) {
+        $currentCount = Booking::where('adc_date_id', $newDateId)->count();
+
+        if ($currentCount >= $capacity->capacity) {
+            return back()->withErrors([
+                'adc_date_id' => 'Selected date is FULL for this level.'
+            ]);
+        } */
+        DB::transaction(function () use ($booking, $newDateId) {
             $booking->update([
                 'adc_date_id' => $newDateId,
             ]);
-
-            $user->adc_centre_id = $capacity->adcDate->adc_centre_id;
-            $user->save();
-
-            //$user->notify(new BookingUpdatedNotification($booking));
         });
 
-        return redirect()->route('admin.bookings.index')
+        //$user->notify(new BookingUpdatedNotification($booking));
+        \Log::info('BOOKING_UPDATED', [
+            'cpf'      => $booking->user->cpf_no,
+            'user'     => $booking->user->name,
+            'old_date' => $booking->adc_date_id,
+            'new_date' => $newDateId,
+            'upated_by' => auth()->user()->cpf_no,
+            'ip'       => request()->ip(),
+        ]);
+
+        return redirect()
+            ->route('admin.bookings.index')
             ->with('success', 'Booking updated successfully.');
     }
+
     public function destroy(Booking $booking)
     {
         DB::transaction(function () use ($booking) {
             $booking->delete();
-            $booking->user->update(['adc_centre_id' => null]);
         });
+
+        \Log::warning('BOOKING_SOFT_DELETED', [
+            'booking_id' => $booking->id,
+            'cpf'        => $booking->user->cpf_no,
+            'user'       => $booking->user->name,
+            'centre'     => $booking->adcDate->centre->city,
+            'date'       => $booking->adcDate->date->format('Y-m-d'),
+            'deleted_by' => auth()->user()->cpf_no,
+            'ip'         => request()->ip(),
+        ]);
 
         return back()->with('success', 'Booking deleted successfully.');
     }

@@ -1,8 +1,5 @@
 @extends('admin.layouts.app')
 @push('styles')
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
-<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
-
 <style>
     table.dataTable th,
     table.dataTable td {
@@ -59,10 +56,9 @@
         <table id="reportTable" class="display nowrap stripe" style="width:100%">
             <thead>
                 <tr>
-                    <th>Name</th>
                     <th>CPF</th>
+                    <th>Name</th>
                     <th>Level</th>
-                    <th>Location</th>
                     <th>Centre</th>
                     <th>ADC Date</th>
                     <th>Booked At</th>
@@ -75,12 +71,9 @@
 @endsection
 
 @push('scripts')
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
 <script>
+    document.addEventListener("DOMContentLoaded", () => {
+    console.log("JQ:", typeof $);
     $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': '{{ csrf_token() }}'
@@ -94,7 +87,7 @@
         serverSide: false,
         scrollX: true,
         dom: 'Bfrtip',
-        buttons: ['csv', 'excel', 'print'],
+        buttons: ['excel', 'print'],
         ajax: {
             url: "{{ route('admin.reports.data') }}",
             type: "GET",
@@ -107,16 +100,13 @@
             }
         },
         columns: [{
-                data: 'name'
-            },
-            {
                 data: 'cpf_no'
             },
             {
-                data: 'level'
+                data: 'name'
             },
             {
-                data: 'location'
+                data: 'level'
             },
             {
                 data: 'centre'
@@ -134,5 +124,6 @@
         console.log("Filter changed");
         table.ajax.reload();
     });
+});
 </script>
 @endpush

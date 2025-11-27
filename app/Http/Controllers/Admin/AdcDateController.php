@@ -9,6 +9,7 @@ use App\Models\CapacityLevel;
 use App\Models\Level;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class AdcDateController extends Controller
@@ -95,6 +96,12 @@ class AdcDateController extends Controller
                 }
             }
         });
+        \Log::info('ADC_DATE_CREATED', [
+            'admin'  => Auth::user()->cpf_no,
+            'centre' => $request->adc_centre_id,
+            'ip'     => request()->ip(),
+        ]);
+
 
         return redirect()->route('admin.adc-dates.index')
             ->with('success', 'ADC Date created successfully.');
@@ -155,6 +162,12 @@ class AdcDateController extends Controller
             }
         });
 
+        \Log::info('ADC_DATE_UPDATED', [
+            'admin' => Auth::user()->cpf_no,
+            'old'   => $id,
+            'new'   => $request->adc_centre_id,
+        ]);
+
         return redirect()->route('admin.adc-dates.index')
             ->with('success', 'ADC Date updated successfully.');
     }
@@ -169,6 +182,11 @@ class AdcDateController extends Controller
             CapacityLevel::where('adc_date_id', $id)->delete();
             AdcDate::where('id', $id)->delete();
         });
+
+        \Log::warning('ADC_DATE_DELETED', [
+            'admin' => Auth::user()->cpf_no,
+            'date'  => $id,
+        ]);
 
         return redirect()->route('admin.adc-dates.index')
             ->with('success', 'ADC Date deleted successfully.');

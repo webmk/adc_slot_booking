@@ -37,11 +37,14 @@ class BookingUpdatedNotification extends Notification
     {
         return (new MailMessage)
             ->subject('Your ADC Booking Has Been Updated')
-            ->greeting('Hello ' . $notifiable->name)
-            ->line('Your ADC booking has been updated by the Admin.')
-            ->line('New Date: ' . $this->booking->adcDate->date->format('d M Y'))
-            ->line('New Centre: ' . $this->booking->adcDate->centre->city)
-            ->line('Please contact support if you have any questions.');
+            ->greeting('Madam/Sir,')
+            ->line('Your ADC slot for **'
+                . $this->booking->adcDate->date->format('d M Y')
+                . '** at **'
+                . $this->booking->adcDate->centre->city
+                . '** has been successfully updated.')
+            ->line('Warm Regards,')
+            ->salutation('Corporate Promotions, ONGC');
     }
 
     /**

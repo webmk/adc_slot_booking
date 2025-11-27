@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('bookings', function (Blueprint $table) {
+        Schema::create('cpf_location_mappings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('adc_date_id')->constrained('adc_dates')->cascadeOnDelete();
-            $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->string('cpf_no')->index();
+            $table->unsignedBigInteger('adc_centre_id');
             $table->timestamps();
-            $table->softDeletes();
+            $table->foreign('adc_centre_id')->references('id')->on('adc_centres')->cascadeOnDelete();
         });
     }
 
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('bookings');
+        Schema::dropIfExists('cpf_location_mappings');
     }
 };

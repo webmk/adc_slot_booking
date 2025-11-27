@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\Admin\CpfLocationMappingController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -35,6 +36,12 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->group(function () {
         EmployeeLocationMappingController::class,
         ['as' => 'admin']
     );
+    Route::resource(
+        'cpf-mappings',
+        CpfLocationMappingController::class,
+        ['as' => 'admin']
+    );
+
     Route::get('/reports/data', [ReportController::class, 'fetchData'])
     ->name('admin.reports.data');
     Route::get('/reports', [ReportController::class, 'dynamicReport'])
