@@ -12,6 +12,7 @@ use App\Models\CapacityLevel;
 use App\Models\Booking;
 use App\Models\CpfLocationMapping;
 use App\Models\EmployeeLocationMapping;
+use App\Models\FrozenLevel;
 use App\Notifications\BookingCreatedNotification;
 
 class BookingController extends Controller
@@ -42,9 +43,26 @@ class BookingController extends Controller
                 'adcDates' => collect(),
                 'alreadyBooked' => false,
                 'booking' => null,
-                'error' => 'You are not allowed to book'
+                'error' => 'Your CPF is not mapped to any ADC Centre. Please contact admin.'
             ]);
         }
+
+        $level = Auth::user()->level;
+        $isFrozen = FrozenLevel::where('level', $level)
+            ->where('is_frozen', true)
+            ->exists();
+
+        if ($isFrozen) {
+            return view('employee.index', [
+                'user' => Auth::user(),
+                'adcDates' => collect(),
+                'alreadyBooked' => false,
+                'frozen' => true,
+                'capacities' => collect(),
+                'booking' => null
+            ]);
+        }
+
         $levelName = $user->level;
         $adcDates = AdcDate::with(['centre', 'capacities' => function ($q) use ($levelName) {
             $q->where('level', $levelName);
@@ -64,7 +82,8 @@ class BookingController extends Controller
             'user' => $user,
             'adcDates' => $adcDates,
             'alreadyBooked' => false,
-            'booking' => null
+            'booking' => null,
+            'allDatesFull' => $adcDates->isEmpty() && !$isFrozen
         ]);
     }
 
@@ -155,7 +174,7 @@ class BookingController extends Controller
                 'created_by'  => $user->id,
             ]);
 
-            //$user->notify(new BookingCreatedNotification($booking));
+            $user->notify(new BookingCreatedNotification($booking));
             session()->put('booking_id', $booking->id);
         });
 

@@ -1,8 +1,14 @@
 <div class="h-full flex flex-col">
-  <div class="p-4 border-b">
-    <a href="{{ route('admin.dashboard') }}" class="block text-xl font-bold">{{ config('app.name') }}</a>
-    <p class="text-xs text-gray-500 mt-1">Admin Panel</p>
+  <div class="p-4 border-b flex items-center gap-3">
+  <img src="{{ asset('images/ongc_logo.png') }}" width="105" height="105" alt="Logo" />
+
+  <div class="flex flex-col leading-tight">
+    <a href="{{ route('admin.dashboard') }}" class="text-lg font-bold">
+      {{ config('app.name') }}
+    </a>
+    <p class="text-xs text-gray-500">Admin Panel</p>
   </div>
+</div>
   <nav class="flex-1 px-3 py-4 overflow-auto">
     <ul class="space-y-1">
       <li>
@@ -57,6 +63,14 @@
           Locations
         </a>
       </li> -->
+      <li>
+        <a href="{{ route('admin.levels.freeze') }}" class="flex items-center gap-3 p-2 rounded hover:bg-gray-50">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M3 7h18M3 12h18M3 17h18" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          Freeze Levels
+        </a>
+      </li>
       <li>
         <a href="{{ route('admin.reports') }}" class="flex items-center gap-3 p-2 rounded hover:bg-gray-50">
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">

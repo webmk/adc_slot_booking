@@ -55,6 +55,7 @@ class User extends Authenticatable
     {
         return $query->whereNotNull('level')
             ->whereRaw("TRIM(level) != ''")
+            ->whereRaw("level NOT LIKE '%-%'")
             ->distinct()
             ->orderBy('level')
             ->pluck('level');
@@ -63,5 +64,9 @@ class User extends Authenticatable
     public function centre()
     {
         return $this->belongsTo(AdcCentre::class, 'adc_centre_id');
+    }
+
+    public function booking(){
+        return $this->belongsTo(Booking::class, 'id');
     }
 }

@@ -110,9 +110,20 @@
         <div class="mt-6 p-4 bg-gray-100 rounded text-gray-600">
             Date selection is disabled because you have already booked a slot.
         </div>
-
+        @elseif(isset($frozen) && $frozen)
+        <div class="mt-6 p-4 bg-yellow-100 border border-yellow-400 rounded text-yellow-800">
+            <p class="font-semibold">Level Frozen</p>
+            <p class="mt-2">Bookings for your level ({{ $user->level }}) are currently frozen. Please check back later or contact the administrator for more information.</p>
+        </div>
+        @elseif(isset($allDatesFull) && $allDatesFull)
+        <div class="mt-6 p-4 bg-orange-100 border border-orange-400 rounded text-orange-800">
+            <p class="font-semibold">All Dates Full</p>
+            <p class="mt-2">Unfortunately, all available dates for your level are currently fully booked. Please check back later for new availability.</p>
+        </div>
+        @elseif(isset($error))
+        <p class="text-red-600 text-md">{{ $error }}</p>
         @else
-        <p class="text-red-600 text-md">You are not allowed to book</p>
+        <p class="text-red-600 text-md">No available dates found</p>
         @endif
         @endif
     </div>

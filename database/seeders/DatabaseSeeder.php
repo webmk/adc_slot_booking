@@ -19,16 +19,16 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         User::factory()->create([
-            'cpf_no' => 'A006142',
-            'name' => 'Manish',
-            'email' => 'manish.kumar@cipl.org.in',
-            'mobile' => '8873535456',
+            'cpf_no' => 'ABC007',
+            'name' => 'Test',
+            'email' => 'test@example.com',
+            'mobile' => '9876543210',
             'level' => 'E5',
             'location' => 'DELH',
             'work_pattern' => 'Full-time',
             'duty_type' => 'On-site',
             'role' => '',
-            'password' => Hash::make('ongc@123'),
+            'password' => Hash::make('adc@123'),
         ]);
 
         /* $this->call([

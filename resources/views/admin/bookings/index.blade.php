@@ -5,8 +5,11 @@
 @section('content')
 <div class="flex justify-between items-center mb-6">
     <h2 class="text-2xl font-semibold">Employee Bookings</h2>
+    <a href="{{ route('admin.bookings.create') }}"
+        class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+        + Create Booking
+    </a>
 </div>
-
 <form class="bg-white p-4 shadow rounded mb-6 flex flex-wrap gap-4">
     <div>
         <label>CPF No</label>

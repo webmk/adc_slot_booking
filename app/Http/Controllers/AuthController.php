@@ -28,41 +28,61 @@ class AuthController extends Controller
 
         $cpf = $request->cpf_no;
         $password = $request->password;
-        $user = User::where('cpf_no', $cpf)->first();
-        if ($user && Hash::check($password, $user->password)) {
-            Auth::login($user);
-            $request->session()->regenerate();
-            return $this->redirectAfterLogin($user);
-        }
 
-        if (!$user) {
+        try {
             $connection = Container::getConnection('default');
             $record = $connection->query()->findBy('samaccountname', $cpf);
-            $level = $userLevelService->getUserLevel($cpf)?->GR_Res?->Level;
 
             if (!$record) {
-                return false;
+                if (Auth::attempt(['cpf_no' => $cpf, 'password' => $password])) {
+                    $request->session()->regenerate();
+                    return $this->redirectAfterLogin(Auth::user());
+                }
+
+                return back()->withErrors([
+                    'cpf_no' => 'Invalid CPF or password.',
+                ])->withInput();
             }
-            $user = User::create(
-                [
-                    'cpf_no'           => $cpf,
-                    'name'             => $record['cn'][0] ?? null,
-                    'email'            => $record['mail'][0] ?? null,
-                    'mobile'           => $record['telephonenumber'][0] ?? null,
-                    'location'         => $record['physicaldeliveryofficename'][0] ?? null,
-                    'level'            => $level ?? null,
-                    'password'         => Hash::make($password),
-                ]
-            );
 
-            Auth::login($user);
-            $request->session()->regenerate();
-            return $this->redirectAfterLogin($user);
+            if ($connection->auth()->attempt($record['dn'], $password)) {
+                $user = User::where('cpf_no', $cpf)->first();
+                if (!$user) {
+                    $level = $userLevelService->getUserLevel($cpf)?->GR_Res?->Level;
+
+                    $user = User::create([
+                        'cpf_no'   => $cpf,
+                        'name'     => $record['cn'][0] ?? '-',
+                        'email'    => $record['mail'][0] ?? '-',
+                        'mobile'   => $record['telephonenumber'][0] ?? '-',
+                        'location' => $record['physicaldeliveryofficename'][0] ?? '-',
+                        'level'    => $level ?? '-',
+                        'password' => Hash::make($password),
+                    ]);
+                } else {
+                    $user->update([
+                        'password' => Hash::make($password),
+                    ]);
+                }
+
+                Auth::login($user);
+                $request->session()->regenerate();
+                return $this->redirectAfterLogin($user);
+            }
+
+            return back()->withErrors([
+                'cpf_no' => 'Authentication failed.',
+            ])->withInput();
+        } catch (\Exception $e) {
+            if (Auth::attempt(['cpf_no' => $cpf, 'password' => $password])) {
+                $request->session()->regenerate();
+                return $this->redirectAfterLogin(Auth::user());
+            }
+
+            return back()->withErrors([
+                'cpf_no' => 'AD service unavailable. Try again later.',
+            ])->withInput();
         }
-
-        return back()->withErrors(['cpf_no' => 'Invalid CPF or password.',])->withInput();
     }
-
 
 
     private function redirectAfterLogin(User $user)
